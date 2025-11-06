@@ -9,11 +9,16 @@ class HomePage extends StatelessWidget {
 
   final AuthService _authService = AuthService();
   final ChatServices _chatService = ChatServices();
-
-  Future<void> _logout(BuildContext context) async {
-    await _authService.signOut();
-    Navigator.pushReplacementNamed(context, '/login');
+  void logout() {
+    // get auth service
+    final _auth = AuthService();
+    _auth.signOut();
   }
+
+  // Future<void> _logout(BuildContext context) async {
+  //   await _authService.signOut();
+  //   Navigator.pushReplacementNamed(context, '/login');
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +53,14 @@ class HomePage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.logout,
-                        color: theme.colorScheme.onPrimary,
-                      ),
-                      onPressed: () => _logout(context),
-                    ),
+                    IconButton(onPressed: logout, icon: Icon(Icons.logout)),
+                    // IconButton(
+                    //   icon: Icon(
+                    //     Icons.logout,
+                    //     color: theme.colorScheme.onPrimary,
+                    //   ),
+                    //   onPressed: () => _logout(context),
+                    // ),
                   ],
                 ),
               ),
