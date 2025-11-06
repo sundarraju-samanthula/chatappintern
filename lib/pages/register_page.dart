@@ -1,5 +1,7 @@
+import 'package:chatapp/authentication/auth.dart';
 import 'package:chatapp/components/my_button.dart';
 import 'package:chatapp/components/text_field.dart';
+import 'package:chatapp/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -8,7 +10,76 @@ class RegisterPage extends StatelessWidget {
   final TextEditingController _cfmpwdcontroller = TextEditingController();
   final void Function()? onTap;
   RegisterPage({super.key, required this.onTap});
-  void register() {}
+  void register(BuildContext context) async {
+    final _auth = AuthService();
+    final email = _emailcontroller.text.trim();
+    final pwd = _pwdcontroller.text;
+    final confirm = _cfmpwdcontroller.text;
+
+    if (email.isEmpty || pwd.isEmpty || confirm.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) =>
+            const AlertDialog(title: Text("Please fill all fields.")),
+      );
+      return;
+    }
+
+    if (pwd != confirm) {
+      showDialog(
+        context: context,
+        builder: (context) =>
+            const AlertDialog(title: Text("Passwords don't match!")),
+      );
+      return;
+    }
+
+    try {
+      final cred = await _auth.signUpWithEmailPassword(email, pwd);
+      // Registration successful — maybe navigate:
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (ctx) => HomePage()));
+    } on Exception catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Registration failed"),
+          content: Text(e.toString()),
+        ),
+      );
+    }
+  }
+
+  // Future<void> register(BuildContext context) async {
+  //   // get auth service
+  //   final _auth = AuthService();
+
+  //   // passwords match -> create user
+  //   if (_pwdcontroller.text == _cfmpwdcontroller.text) {
+  //     try { final cred = await _auth.signUpWithEmailPassword(
+  //         _emailcontroller.text,
+  //         _pwdcontroller.text,
+  //       );
+
+  //     } catch (e) {
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) =>
+  //             AlertDialog(title: Text(e.toString())), // AlertDialog
+  //       );
+  //     }
+  //   }
+  //   // passwords dont match -> tell user to fix
+  //   else {
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) => const AlertDialog(
+  //         title: Text("Passwords don't match!"),
+  //       ), // AlertDialog
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +127,7 @@ class RegisterPage extends StatelessWidget {
             ),
 
             //login button
-            MyButton(text: "register", onTap: register),
+            MyButton(text: "register", onTap: () => register(context)),
             const SizedBox(height: 25),
 
             Row(

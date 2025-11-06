@@ -1,3 +1,4 @@
+import 'package:chatapp/authentication/auth.dart';
 import 'package:chatapp/components/my_button.dart';
 import 'package:chatapp/components/text_field.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,27 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _emailcontroller = TextEditingController();
   final TextEditingController _pwdcontroller = TextEditingController();
 
-  void login() {}
+  void login(BuildContext context)async {
+    final authService = AuthService();
+
+// try login
+try {
+  await authService.signInWithEmailPassword(
+    _emailcontroller.text,
+    _pwdcontroller.text,
+  );
+}
+
+// catch any errors
+catch (e) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(e.toString()), // AlertDialog
+    ),
+  );
+}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +71,7 @@ class LoginPage extends StatelessWidget {
             ),
 
             //login button
-            MyButton(text: "login", onTap: login),
+            MyButton(text: "login", onTap:()=>login(context)),
             const SizedBox(height: 25),
 
             Row(
